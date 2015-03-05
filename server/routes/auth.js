@@ -6,7 +6,7 @@ var auth = {
 
     var username = req.body.username || '';
     var password = req.body.password || '';
-
+    console.log(username);
     if (username == '' || password == '') {
       res.status(401);
       res.json({
@@ -30,7 +30,7 @@ var auth = {
 
     if (dbUserObj) {
 
-      // If authentication is success, we will generate a token
+      // If authentication is success, we will generat e a token
       // and dispatch it to the client
 
       res.json(genToken(dbUserObj));
@@ -46,6 +46,11 @@ var auth = {
       username: 'arvind@myapp.com'
     };
 
+    var UserModel = require('../model/user.model.js');
+    userModel = new UserModel();
+    userModel.getUser(sql,function(results){
+      if(results.username == 'admin' && results.password)
+    });
     return dbUserObj;
   },
 
