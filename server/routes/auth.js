@@ -15,9 +15,25 @@ var auth = {
       });
       return;
     }
-
+        var dbUserObj = { // spoofing a userobject from the DB. 
+      name: 'arvind',
+      role: 'admin',
+      username: 'arvind@myapp.com'
+    };
+      var UserModel = require('../model/user.model.js');
+    userModel = new UserModel();
+    var sql = 'select * from eCampus_users where username="' + username + '"';
+    userModel.getUser(sql,function(err,results){
+      //console.log(results);
+      if(results.username == 'admin' && results.password == 'welcome1'){
+        res.json(genToken(dbUserObj));
+      }else{
+        dbUserObj.error = 'login fail';
+        res.json(genToken(dbUserObj));
+      }
+    });
     // Fire a query to your DB and check if the credentials are valid
-    var dbUserObj = auth.validate(username, password);
+    /*var dbUserObj = auth.validate(username, password);
    
     if (!dbUserObj) { // If authentication fails, we send a 401 back
       res.status(401);
@@ -35,7 +51,7 @@ var auth = {
 
       res.json(genToken(dbUserObj));
     }
-
+*/
   },
 
   validate: function(username, password) {
@@ -46,12 +62,19 @@ var auth = {
       username: 'arvind@myapp.com'
     };
 
-    var UserModel = require('../model/user.model.js');
+/*    var UserModel = require('../model/user.model.js');
     userModel = new UserModel();
-    userModel.getUser(sql,function(results){
-      if(results.username == 'admin' && results.password)
-    });
-    return dbUserObj;
+    var sql = 'select * from eCampus_users where username="' + username + '"';
+    userModel.getUser(sql,function(err,results){
+      //console.log(results);
+      if(results.username == 'admin' && results.password == 'welcome1'){
+        return dbUserObj;
+      }else{
+        dbUserObj.error = 'login fail';
+        return dbUserObj;
+      }
+    });*/
+    //return dbUserObj;
   },
 
   validateUser: function(username) {
