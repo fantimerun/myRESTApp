@@ -10,7 +10,7 @@ log4js.configure({
 		//record logs in file
 		{
 			type : 'file',
-			filename : 'd:/johnny/myRESTApp/server/logs/log.log',
+			filename : 'd:/myRESTApp/server/logs/log.log',
 			pattern : '_yyyy-MM-dd',
 			maxLogSize : 20480,
 			backups : 3,

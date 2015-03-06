@@ -1,4 +1,4 @@
-module.exports.checkpasswod = function(pwd,repwd,callback){
+module.exports.checkpassword = function(pwd,repwd,callback){
 	if(pwd == repwd)
 		return callback(true);
 	else

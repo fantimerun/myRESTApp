@@ -23,14 +23,14 @@ var auth = {
     var options = {'username' : username};
     userModel.getUser(options,function(err,results){
         if(results){
-
           var passwordHelper = require('../util/password.helper.js');
-          passwordHelper.checkpassword(password,results.password,function(flag){
+          var userInfo = results[0];
+          passwordHelper.checkpassword(password,userInfo.password,function(flag){
             if(!flag){
               result = {
                 username : username,
                 password : password,
-                errMsg : 'Username and password do not match or you do not have an account yet.'
+                errMsg : 'incorrect password!'
               };
 
               res.json(result);
@@ -38,7 +38,7 @@ var auth = {
               var md5 = crypto.createHash('md5');
               var pwd = md5.update('welcome1').digest();
               result = {
-                username : usernmae,
+                username : username,
                 password : password,
                 errMsg : null,
                 token : new Buffer(pwd , 'binary').toString('base64')
@@ -51,7 +51,7 @@ var auth = {
           result = {
             username : username,
             password : password,
-            errMsg : 'Username and password do not match or you do not have an account yet.'
+            errMsg : 'Username is not exist!'
           };
 
           res.json(result);
