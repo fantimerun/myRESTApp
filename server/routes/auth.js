@@ -1,9 +1,10 @@
 var jwt = require('jwt-simple');
-
+var crypto = require('crypto');
 var auth = {
 
   login: function(req, res) {
 
+    var result=null;
     var username = req.body.username || '';
     var password = req.body.password || '';
     console.log(username);
@@ -15,43 +16,48 @@ var auth = {
       });
       return;
     }
-        var dbUserObj = { // spoofing a userobject from the DB. 
-      name: 'arvind',
-      role: 'admin',
-      username: 'arvind@myapp.com'
-    };
-      var UserModel = require('../model/user.model.js');
+
+    //login action
+    var UserModel = require('../model/user.model.js');
     userModel = new UserModel();
-    var sql = 'select * from eCampus_users where username="' + username + '"';
-    userModel.getUser(sql,function(err,results){
-      //console.log(results);
-      if(results.username == 'admin' && results.password == 'welcome1'){
-        res.json(genToken(dbUserObj));
-      }else{
-        dbUserObj.error = 'login fail';
-        res.json(genToken(dbUserObj));
-      }
+    var options = {'username' : username};
+    userModel.getUser(options,function(err,results){
+        if(results){
+
+          var passwordHelper = require('../util/password.helper.js');
+          passwordHelper.checkpassword(password,results.password,function(flag){
+            if(!flag){
+              result = {
+                username : username,
+                password : password,
+                errMsg : 'Username and password do not match or you do not have an account yet.'
+              };
+
+              res.json(result);
+            }else{
+              var md5 = crypto.createHash('md5');
+              var pwd = md5.update('welcome1').digest();
+              result = {
+                username : usernmae,
+                password : password,
+                errMsg : null,
+                token : new Buffer(pwd , 'binary').toString('base64')
+              };
+
+              res.json(result);
+            }
+          });
+        }else{
+          result = {
+            username : username,
+            password : password,
+            errMsg : 'Username and password do not match or you do not have an account yet.'
+          };
+
+          res.json(result);
+        }
     });
-    // Fire a query to your DB and check if the credentials are valid
-    /*var dbUserObj = auth.validate(username, password);
-   
-    if (!dbUserObj) { // If authentication fails, we send a 401 back
-      res.status(401);
-      res.json({
-        "status": 401,
-        "message": "Invalid credentials"
-      });
-      return;
-    }
-
-    if (dbUserObj) {
-
-      // If authentication is success, we will generat e a token
-      // and dispatch it to the client
-
-      res.json(genToken(dbUserObj));
-    }
-*/
+       
   },
 
   validate: function(username, password) {

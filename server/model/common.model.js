@@ -17,8 +17,8 @@ CommonModel.prototype.connection = function(callback){
 			var msg = {
 				'log' : 'mysql connection error',
 				'message' : err.message,
-				'code' : error.code,
-				'fatal' : error.fatal
+				'code' : err.code,
+				'fatal' : err.fatal
 			};
 			console.log(msg);
 		}
