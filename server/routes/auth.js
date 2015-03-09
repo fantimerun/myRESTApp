@@ -7,7 +7,7 @@ var auth = {
     var result=null;
     var username = req.body.username || '';
     var password = req.body.password || '';
-    console.log(username);
+
     if (username == '' || password == '') {
       res.status(401);
       res.json({
@@ -18,9 +18,11 @@ var auth = {
     }
 
     //login action
-    var UserModel = require('../model/user.model.js');
+    /*var UserModel = require('../model/user.model.js');
     userModel = new UserModel();
     var options = {'username' : username};
+
+    userModel.getUser(options,);
     userModel.getUser(options,function(err,results){
         if(results){
           var passwordHelper = require('../util/password.helper.js');
@@ -56,6 +58,15 @@ var auth = {
 
           res.json(result);
         }
+    });*/
+    //login 
+    var UserModel = require('../model/user.model.js');
+    userModel = new UserModel();
+
+    var options = {'username' : username , 'password' : password};
+    userModel.login(options,function(results){
+
+      res.json(results);
     });
        
   },
@@ -83,15 +94,19 @@ var auth = {
     //return dbUserObj;
   },
 
-  validateUser: function(username) {
+  validateUser: function(username,callback) {
     // spoofing the DB response for simplicity
-    var dbUserObj = { // spoofing a userobject from the DB. 
+/*    var dbUserObj = { // spoofing a userobject from the DB. 
       name: 'arvind',
       role: 'admin',
       username: 'arvind@myapp.com'
-    };
-
-    return dbUserObj;
+    };*/
+    var options = {'username' : username};
+    var UserModel = require('../model/user.model.js');
+    userModel = new UserModel();
+    userModel.getCredentials(options,function(results){
+      return callback(results);
+    });
   },
 }
 

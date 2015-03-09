@@ -12,9 +12,12 @@ module.exports = function(req, res, next) {
 
   var token = (req.body && req.body.access_token) || (req.query && req.query.access_token) || req.headers['x-access-token'];
   var key = (req.body && req.body.x_key) || (req.query && req.query.x_key) || req.headers['x-key'];
-
+  console.log('aa');
+  console.log(token);
+   console.log(key);
   if (token || key) {
     try {
+
       var decoded = jwt.decode(token, require('../config/secret.js')());
 
       if (decoded.exp <= Date.now()) {
@@ -27,8 +30,9 @@ module.exports = function(req, res, next) {
       }
 
       // Authorize the user to see if s/he can access our resources
-
-      var dbUser = validateUser(key); // The key would be the logged in user's username
+      validateUser(key,function(dbUser){
+        //console.log(dbUser);
+      //var dbUser = validateUser(key); // The key would be the logged in user's username
       if (dbUser) {
 
 
@@ -51,6 +55,7 @@ module.exports = function(req, res, next) {
         });
         return;
       }
+    });
 
     } catch (err) {
       res.status(500);
